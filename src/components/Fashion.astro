@@ -1,0 +1,158 @@
+---
+import { boge, work } from '../content/fashion';
+import PhotoFrame from './PhotoFrame.astro';
+import SectionHead from './SectionHead.astro';
+import Text from './Text.astro';
+
+const jumps = [
+  ['f-styling', 'Styling'],
+  ['f-projects', 'Projects'],
+  ['f-cd', 'Creative Direction'],
+  ['boge', 'Bogè'],
+  ['f-editorial', 'Editorial'],
+].filter(([id]) => id === 'boge' || work.some((w) => w.anchor === id));
+---
+
+<section class="sec wrap" id="fashion">
+  <SectionHead title="Fashion" accent="& styling">
+    <p>
+      Styling, creative direction, editorial and personal projects. Each credit lists who did what,
+      the way it would run in print.
+    </p>
+  </SectionHead>
+  <nav class="chips" aria-label="Fashion categories">
+    {jumps.map(([id, label]) => (
+      <a class="chip" href={`#${id}`}>
+        {label}
+      </a>
+    ))}
+  </nav>
+
+  <div class="grid">
+    {work.map((w) => (
+      <article class="work" id={w.anchor} style={`--span:${w.span}`}>
+        <PhotoFrame
+          photo={w.photo}
+          label={w.category}
+          sizes={`(max-width: 900px) 100vw, ${Math.round((w.span / 12) * 100)}vw`}
+        />
+        <div class="meta mono">
+          <span>{w.category}</span>
+          <span>{w.year}</span>
+        </div>
+        <h3>
+          <Text text={w.title} />
+        </h3>
+        <p class="credits">
+          <Text text={w.credits} />
+        </p>
+      </article>
+    ))}
+  </div>
+
+  <div class="boge" id="boge">
+    <div>
+      <span class="mono muted">My label</span>
+      <div class="boge-word" aria-hidden="true">
+        Bogè
+      </div>
+      <h3 class="sr-only">Bogè</h3>
+      {boge.paragraphs.map((p) => (
+        <p>
+          <Text text={p} />
+        </p>
+      ))}
+      <div class="actions">
+        <a class="btn" href="#contact">
+          Wholesale &amp; press
+        </a>
+        <a class="btn ghost" href="#photo">
+          See the shoots
+        </a>
+      </div>
+    </div>
+    <div class="boge-imgs">
+      {boge.photos.map((p) => (
+        <PhotoFrame photo={p} label={p.label} sizes="(max-width: 900px) 50vw, 25vw" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(12px, 1.6vw, 20px);
+  }
+  .work {
+    grid-column: span var(--span);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .work h3 {
+    margin: 0;
+    font-weight: 700;
+    font-stretch: 75%;
+    text-transform: uppercase;
+    font-size: var(--t-h3);
+    line-height: 1.1;
+  }
+  .credits {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--muted);
+  }
+  .boge {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(16px, 3vw, 40px);
+    margin-top: clamp(40px, 6vw, 72px);
+    border-top: 1px solid var(--ink);
+    padding-top: 20px;
+  }
+  .boge-word {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(5rem, 16vw, 12rem);
+    line-height: 0.8;
+    margin: 6px 0 16px;
+    color: var(--accent);
+  }
+  .boge p {
+    max-width: 52ch;
+    margin: 0 0 1em;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .boge-imgs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .boge-imgs > :global(:first-child) {
+    grid-row: span 2;
+    aspect-ratio: auto;
+    height: 100%;
+  }
+  @media (max-width: 900px) {
+    .work {
+      grid-column: span 12;
+    }
+    .boge {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

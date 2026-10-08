@@ -1,0 +1,154 @@
+---
+import { site } from '../content/site';
+import Text from './Text.astro';
+const { email, instagram, instagramUrl, representation } = site.contact;
+const isPlaceholder = (s: string) => s.startsWith('[');
+---
+
+<footer class="contact" id="contact">
+  <div class="wrap">
+    <span class="mono dim">Bookings, collaborations, press</span>
+    <h2>
+      Let's make <span class="it">something</span>
+    </h2>
+    <div class="row">
+      <div>
+        <span class="mono label">Email</span>
+        <div class="val" id="email">
+          {isPlaceholder(email) ? <Text text={email} /> : <a href={`mailto:${email}`}>{email}</a>}
+        </div>
+        <button class="copy" id="copyEmail" type="button">
+          Copy email
+        </button>
+      </div>
+      <div>
+        <span class="mono label">Instagram</span>
+        <div class="val">
+          {isPlaceholder(instagram) ? (
+            <Text text={instagram} />
+          ) : (
+            <a href={instagramUrl} target="_blank" rel="noopener">
+              {instagram}
+            </a>
+          )}
+        </div>
+      </div>
+      <div>
+        <span class="mono label">Representation</span>
+        <div class="val">
+          <Text text={representation} />
+        </div>
+      </div>
+    </div>
+    <div class="foot mono">
+      <span>{site.name} · New York</span>
+      <span>© {new Date().getFullYear()}</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const cb = document.getElementById('copyEmail') as HTMLButtonElement | null;
+  const el = document.getElementById('email');
+  if (cb && el) {
+    cb.addEventListener('click', () => {
+      const t = (el.textContent ?? '').trim();
+      const done = () => {
+        cb.textContent = 'Copied';
+        setTimeout(() => (cb.textContent = 'Copy email'), 1600);
+      };
+      const fallback = () => {
+        const r = document.createRange();
+        r.selectNodeContents(el);
+        const s = getSelection();
+        s?.removeAllRanges();
+        s?.addRange(r);
+        cb.textContent = 'Selected, press Ctrl/⌘+C';
+      };
+      try {
+        navigator.clipboard.writeText(t).then(done, fallback);
+      } catch {
+        fallback();
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact {
+    margin-top: clamp(56px, 8vw, 112px);
+    background: var(--ink);
+    color: var(--paper);
+    --accent: var(--accent-inverse);
+  }
+  .wrap {
+    padding-block: clamp(48px, 7vw, 96px);
+  }
+  .dim {
+    opacity: 0.6;
+  }
+  h2 {
+    margin: 0;
+    font-weight: 900;
+    font-stretch: 62%;
+    text-transform: uppercase;
+    line-height: 0.82;
+    font-size: var(--t-contact);
+  }
+  h2 .it {
+    color: var(--accent);
+    font-size: 0.5em;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+    border-top: 1px solid color-mix(in srgb, var(--paper) 30%, transparent);
+    padding-top: 20px;
+  }
+  .label {
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .val {
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-stretch: 85%;
+    word-break: break-word;
+  }
+  .val a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .copy {
+    font: inherit;
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 10px;
+    background: transparent;
+    color: var(--paper);
+    border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent);
+    padding: 6px 10px;
+    cursor: pointer;
+  }
+  .copy:hover {
+    border-color: var(--paper);
+  }
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 56px;
+    opacity: 0.6;
+  }
+  @media (max-width: 900px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+// Section title: `title` in condensed caps, optional `accent` in Bodoni italic.
+interface Props {
+  title: string;
+  accent?: string;
+  join?: boolean; // true = no space between title and accent ("PHOTOgraphy")
+}
+const { title, accent, join = false } = Astro.props;
+---
+
+<div class="sec-head">
+  <h2>
+    {title}
+    {accent && !join && ' '}
+    {accent && <span class="it">{accent}</span>}
+  </h2>
+  <div class="desc">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .sec-head {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+    align-items: end;
+    margin-bottom: clamp(24px, 3vw, 40px);
+  }
+  h2 {
+    margin: 0;
+    font-weight: 900;
+    font-stretch: 62%;
+    text-transform: uppercase;
+    font-size: var(--t-h2);
+    line-height: 0.85;
+  }
+  h2 .it {
+    font-size: 0.55em;
+    color: var(--accent);
+  }
+  .desc :global(p) {
+    margin: 0;
+    color: var(--muted);
+    max-width: 52ch;
+  }
+  @media (max-width: 900px) {
+    .sec-head {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

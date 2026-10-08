@@ -1,0 +1,144 @@
+---
+import { design } from '../content/design';
+import PhotoFrame from './PhotoFrame.astro';
+import SectionHead from './SectionHead.astro';
+---
+
+<section class="sec wrap" id="design">
+  <SectionHead title="Creative" accent="& design">
+    <p>
+      Graphic design, campaign ideas, identities and social concepts, built for brands that care how
+      they look.
+    </p>
+  </SectionHead>
+  <div class="grid">
+    {design.map((d) => (
+      <article class="dcard">
+        <span class="mono muted">{d.category}</span>
+        {d.visual === 'poster' && (
+          <div class="swatch poster">
+            <span class="mk">
+              {(d.posterText ?? '').split('\n').map((line, i) => (
+                <>
+                  {i > 0 && <br />}
+                  {line}
+                </>
+              ))}
+            </span>
+          </div>
+        )}
+        {d.visual === 'image' && d.photos?.[0] && (
+          <PhotoFrame
+            photo={d.photos[0]}
+            label={d.photos[0].label}
+            ratio="1/1"
+            sizes="(max-width: 560px) 100vw, 25vw"
+          />
+        )}
+        {d.visual === 'wordmark' && (
+          <div class="swatch" role="img" aria-label="Bogè wordmark with brand palette">
+            <span class="mk">Bogè</span>
+            <div class="pal">
+              <i style="background:var(--tone-1)" />
+              <i style="background:var(--tone-4)" />
+              <i style="background:var(--tone-6)" />
+              <i style="background:var(--tone-2)" />
+            </div>
+          </div>
+        )}
+        {d.visual === 'feed' && (
+          <div class="feed">
+            {d.photos?.map((p) => (
+              <PhotoFrame photo={p} ratio="auto" sizes="(max-width: 560px) 33vw, 9vw" />
+            ))}
+          </div>
+        )}
+        <h3>{d.title}</h3>
+        <p>{d.description}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(12px, 1.6vw, 20px);
+  }
+  .dcard {
+    min-width: 0;
+    border-top: 1px solid var(--ink);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  h3 {
+    margin: 0;
+    font-weight: 800;
+    font-stretch: 62%;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    line-height: 0.95;
+  }
+  .dcard p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .swatch {
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+    display: grid;
+    place-items: center;
+    background: var(--frame);
+    position: relative;
+    overflow: hidden;
+  }
+  .mk {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: var(--ink);
+  }
+  .poster {
+    background: var(--accent);
+  }
+  .poster .mk {
+    color: var(--paper);
+    font-family: var(--f-display);
+    font-style: normal;
+    font-weight: 900;
+    font-stretch: 62%;
+    text-transform: uppercase;
+    line-height: 0.85;
+    text-align: center;
+  }
+  .feed {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    aspect-ratio: 1 / 1;
+    max-width: 100%;
+  }
+  .pal {
+    display: flex;
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 22%;
+  }
+  .pal i {
+    flex: 1;
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

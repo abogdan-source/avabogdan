@@ -1,0 +1,120 @@
+---
+import { Image } from 'astro:assets';
+import type { FrameVariant, Photo } from '../content/types';
+
+interface Props {
+  photo: Photo;
+  variant?: FrameVariant;
+  label?: string;
+  edge?: string;
+  frame?: string;
+  handwritten?: string;
+  eager?: boolean;
+  sizes?: string;
+  ratio?: Photo['ratio'] | 'auto';
+}
+
+const {
+  photo,
+  variant = 'plain',
+  label,
+  edge,
+  frame,
+  handwritten,
+  eager = false,
+  sizes = '(max-width: 900px) 100vw, 50vw',
+  ratio = photo.ratio,
+} = Astro.props;
+const [a, b] = photo.tones ?? ['--tone-2', '--tone-1'];
+const style = `--r:${ratio};--a:var(${a});--b:var(${b})`;
+---
+
+{variant === 'plain' ? (
+  <div class="img" style={style}>
+    {photo.src ? (
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        widths={[480, 800, 1200, 1600]}
+        sizes={sizes}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : 'auto'}
+      />
+    ) : (
+      <span class="sr-only" role="img" aria-label={photo.alt} />
+    )}
+    {label && <span class="lbl mono">{label}</span>}
+  </div>
+) : (
+  <div class={`frame-${variant}`}>
+    {variant === 'film' && edge && <span class="edge">{edge}</span>}
+    <Astro.self photo={photo} eager={eager} sizes={sizes} ratio={ratio} label={label} />
+    {variant === 'film' && frame && <span class="num">{frame}</span>}
+    {variant === 'polaroid' && handwritten && <span class="hand">{handwritten}</span>}
+  </div>
+)}
+
+<style>
+  .frame-film {
+    background: var(--film);
+    padding: 18px 8px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .frame-film::before,
+  .frame-film::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    height: 7px;
+    background: repeating-linear-gradient(90deg, var(--paper) 0 7px, transparent 7px 16px);
+    opacity: 0.9;
+  }
+  .frame-film::before {
+    top: 5px;
+  }
+  .frame-film::after {
+    bottom: 5px;
+  }
+  .edge,
+  .num {
+    position: absolute;
+    color: var(--film-edge);
+    font-family: var(--f-mono);
+    letter-spacing: 0.1em;
+  }
+  .edge {
+    top: -1px;
+    right: 12px;
+    font-size: 0.55rem;
+    transform: translateY(-100%);
+  }
+  .num {
+    bottom: -2px;
+    left: 10px;
+    transform: translateY(100%);
+    font-size: 0.6rem;
+  }
+  .frame-polaroid {
+    background: var(--polaroid);
+    padding: 10px 10px 42px;
+    box-shadow:
+      0 1px 0 var(--line),
+      0 10px 24px -14px rgb(0 0 0 / 0.35);
+    position: relative;
+  }
+  .hand {
+    position: absolute;
+    left: 12px;
+    bottom: 10px;
+    font-family: var(--f-serif);
+    font-style: italic;
+    color: var(--polaroid-ink);
+    font-size: 1rem;
+  }
+  .frame-digital {
+    border: 1px solid var(--line);
+    padding: 6px;
+  }
+</style>

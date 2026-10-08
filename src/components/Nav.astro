@@ -1,0 +1,77 @@
+---
+import { site } from '../content/site';
+const links = [
+  ['about', 'About'],
+  ['fashion', 'Fashion'],
+  ['photo', 'Photo'],
+  ['design', 'Design'],
+  ['modeling', 'Modeling'],
+  ['events', 'PR & Events'],
+  ['writing', 'Writing'],
+  ['contact', 'Contact'],
+];
+---
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="#top">
+      {site.name}
+    </a>
+    <nav class="nav-links mono" aria-label="Sections">
+      {links.map(([id, label]) => (
+        <a href={`#${id}`}>{label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-block: 12px;
+  }
+  .logo {
+    font-weight: 800;
+    font-stretch: 62%;
+    font-size: 1.35rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .nav-links {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-left: auto;
+    min-width: 0;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .nav-links a:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 560px) {
+    .logo {
+      font-size: 1.15rem;
+    }
+  }
+</style>

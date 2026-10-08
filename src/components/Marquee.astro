@@ -1,0 +1,48 @@
+---
+import { site } from '../content/site';
+const words = [...site.marquee, ...site.marquee];
+---
+
+<div class="marquee" aria-hidden="true">
+  <div class="track">
+    {words.map((w) => (
+      <>
+        <span>{w}</span>
+        <span class="star">✶</span>
+      </>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    border-block: 1px solid var(--ink);
+    margin-top: clamp(32px, 5vw, 64px);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .track {
+    display: inline-flex;
+    gap: 2.2rem;
+    padding-block: 12px;
+    padding-right: 2.2rem;
+    animation: slide 38s linear infinite;
+    font-weight: 800;
+    font-stretch: 62%;
+    text-transform: uppercase;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+  }
+  .star {
+    color: var(--accent);
+  }
+  @keyframes slide {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+    }
+  }
+</style>

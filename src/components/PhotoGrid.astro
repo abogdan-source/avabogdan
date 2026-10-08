@@ -1,0 +1,103 @@
+---
+import { photos } from '../content/photos';
+import PhotoFrame from './PhotoFrame.astro';
+import SectionHead from './SectionHead.astro';
+
+const filters = [
+  ['all', 'All'],
+  ['35mm', '35mm'],
+  ['polaroid', 'Polaroid'],
+  ['digital', 'Digital'],
+  ['bts', 'BTS'],
+  ['portraits', 'Portraits'],
+  ['events', 'Events'],
+];
+const variant = { '35mm': 'film', polaroid: 'polaroid', digital: 'digital' } as const;
+const mediumLabel = { '35mm': '35mm', polaroid: 'Polaroid', digital: 'Digital' };
+const catLabel = { bts: 'BTS', portraits: 'Portraits', events: 'Events' };
+---
+
+<section class="sec wrap" id="photo">
+  <SectionHead title="Photo" accent="graphy" join>
+    <p>
+      Film first. A contact sheet of 35mm, Polaroid and digital work, from portraits to the chaos
+      backstage.
+    </p>
+  </SectionHead>
+  <div class="chips" role="group" aria-label="Filter photographs">
+    {filters.map(([f, label]) => (
+      <button class="chip" type="button" data-f={f} aria-pressed={f === 'all' ? 'true' : 'false'}>
+        {label}
+      </button>
+    ))}
+  </div>
+  <div class="grid" id="photoGrid">
+    {photos.map((p) => (
+      <figure class="p-item" data-c={[p.medium, ...p.categories].join(' ')}>
+        <PhotoFrame
+          photo={p.photo}
+          variant={variant[p.medium]}
+          edge={p.edge}
+          frame={p.frame}
+          handwritten={p.handwritten}
+          sizes="(max-width: 560px) 100vw, (max-width: 1100px) 50vw, 25vw"
+        />
+        <figcaption class="cap mono" class:list={{ film: p.medium === '35mm' }}>
+          <span>{p.subject}</span>
+          <span>
+            {[
+              mediumLabel[p.medium],
+              ...p.categories.filter((c) => c !== 'portraits').map((c) => catLabel[c]),
+            ].join(' · ')}
+          </span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+
+<script>
+  const btns = document.querySelectorAll<HTMLButtonElement>('#photo [data-f]');
+  const items = document.querySelectorAll<HTMLElement>('#photoGrid .p-item');
+  btns.forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = b.dataset.f!;
+      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      items.forEach((it) => {
+        it.hidden = f !== 'all' && !(it.dataset.c ?? '').split(' ').includes(f);
+      });
+    }),
+  );
+</script>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: clamp(14px, 2vw, 24px);
+    align-items: start;
+  }
+  .p-item {
+    margin: 0;
+    min-width: 0;
+  }
+  .p-item[hidden] {
+    display: none;
+  }
+  .p-item:nth-child(3n + 1) :global(.frame-polaroid) {
+    transform: rotate(-1.2deg);
+  }
+  .p-item:nth-child(3n + 2) :global(.frame-polaroid) {
+    transform: rotate(0.8deg);
+  }
+  .cap {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    color: var(--muted);
+  }
+  .cap.film {
+    margin-top: 14px;
+  }
+</style>

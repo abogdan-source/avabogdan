@@ -1,0 +1,18 @@
+---
+// Renders a content string, styling [placeholders] and **bold** segments.
+interface Props {
+  text: string;
+}
+const { text } = Astro.props;
+const parts = text.split(/(\[[^\]]+\]|\*\*[^*]+\*\*)/g).filter(Boolean);
+---
+
+{parts.map((p) =>
+  p.startsWith('[') && p.endsWith(']') ? (
+    <span class="ph">{p}</span>
+  ) : p.startsWith('**') && p.endsWith('**') ? (
+    <strong>{p.slice(2, -2)}</strong>
+  ) : (
+    p
+  ),
+)}
